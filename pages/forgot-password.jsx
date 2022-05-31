@@ -1,9 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import Pagelayout from "../layouts/page.layout";
+import Head from "next/head";
 
 function ForgotPasswordPage() {
     return (
         <Pagelayout>
+
+            <Head>
+                <title>Forgot Password</title>
+            </Head>
+
             <div className="flex w-[510px] md:w-full p-10 bg-[#fff] gap-10 flex-col items-center justify-center md:p-5 md:gap-5 rounded-2xl shadow-[0px_16px_24px_rgba(93,106,131,0.02)]">
                 <div className="text-center grid gap-4">
                     <h3 className="text-4xl font-extrabold">
