@@ -7,11 +7,52 @@ import Link from "next/link";
 
 function SignupPage() {
     const [isPasswordHidden, setPasswordHidden] = useState(true)
+    const [passwordError, setPasswordError] = useState(null)
+    const [emailError, setEmailError] = useState(null)
+    const [isLoading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const [data, setData] = useState({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+    })
+
+
+    const validateData = () => {
+        let isValid = true;
+        // check email format
+        const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (!emailRegex.test(data.email)) {
+            setEmailError("Email is not valid")
+            isValid = false;
+        }
+        // check password contains at least one number, one lowercase and one uppercase letter, one special character and at least 8 characters
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+        if (!passwordRegex.test(data.password)) {
+            setPasswordError("Password must contain at least one number, one lowercase and one uppercase letter, one special character and at least 8 characters")
+            isValid = false;
+        }
+        return isValid;
+    }
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log("Submitted");
-        Router.push("/otp");
+        setLoading(true)
+        // clear the form error
+        setError(null)
+        setEmailError(null)
+        setPasswordError(null)
+
+        if (validateData()) {
+            // delay for 5 seconds
+            setTimeout(() => {
+                setLoading(false)
+                Router.push("/verify");
+            }, 5000)
+        } else {
+            setLoading(false)
+        }
     }
 
     return (
@@ -55,26 +96,50 @@ function SignupPage() {
                                     <input className="flex-auto pl-4 h-[56px] border border-gray-300 rounded-xl placeholder:text-gray-500 focus:outline-none focus:ring focus:ring-1 focus:ring-primary"
                                         required
                                         type="text"
-                                        placeholder="First name" />
+                                        minLength={3}
+                                        value={data.firstName}
+                                        placeholder="First name"
+                                        onChange={(e) => setData({ ...data, firstName: e.target.value })}
+                                    />
                                     <input className="flex-auto pl-4 h-[56px] border border-gray-300 rounded-xl placeholder:text-gray-500 focus:outline-none focus:ring focus:ring-1 focus:ring-primary"
                                         required
                                         type="text"
-                                        placeholder="Last name" />
+                                        minLength={3}
+                                        value={data.lastName}
+                                        placeholder="Last name"
+                                        onChange={(event) => setData({ ...data, lastName: event.target.value })}
+                                    />
                                 </div>
 
                                 <input
                                     className="h-[56px] w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring focus:ring-1 focus:ring-primary placeholder:text-gray-500"
                                     placeholder="Email"
                                     type="email"
+                                    id="email"
                                     required
+                                    value={data.email}
+                                    onChange={(event) => setData({ ...data, email: event.target.value })}
                                 />
+
+
+                                {emailError &&
+                                    <label htmlFor="password" className="w-full p-4 flex items-center border border-error rounded-xl">
+                                        <p className="text-error text-sm text-sm font-semibold">
+                                            {emailError}
+                                        </p>
+                                    </label>
+                                }
+
                                 <div className="w-full relative">
                                     <input
                                         className="h-[56px] w-full px-4 border border-gray-300 rounded-xl focus:outline-none focus:ring focus:ring-1 focus:ring-primary placeholder:text-gray-500"
                                         type={isPasswordHidden ? "password" : "text"}
                                         placeholder="Password"
                                         minLength={8}
+                                        id="password"
                                         required
+                                        value={data.password}
+                                        onChange={(event) => setData({ ...data, password: event.target.value })}
                                     />
                                     {isPasswordHidden ?
                                         <button type="button" onClick={() => setPasswordHidden(false)} className="bg-[#fff] absolute top-2/4 right-4 -translate-y-[50%] flex items-center justify-center">
@@ -86,16 +151,33 @@ function SignupPage() {
                                         </button>
                                     }
                                 </div>
+
+                                {passwordError &&
+                                    <label htmlFor="password" className="w-full p-4 flex items-center border border-error rounded-xl">
+                                        <p className="text-error text-sm text-sm font-semibold">
+                                            {passwordError}
+                                        </p>
+                                    </label>
+                                }
+
                                 <div className="w-full flex justify-between my-1">
                                     <p className="text-sm text-gray-600 font-medium">
                                         By creating an account, you agreeing to our <Link href="/link-1"><a className="text-gray-900 font-semibold">Privacy Policy</a></Link>, and <Link href="/link-2"><a className="text-gray-900 font-semibold">Electronics Communication Policy</a></Link>.
                                     </p>
                                 </div>
 
+                                {error &&
+                                    <div className="w-full h-12 p-4 flex items-center border border-error rounded-xl">
+                                        <p className="text-error text-sm text-sm font-semibold">
+                                            {error}
+                                        </p>
+                                    </div>
+                                }
+
                                 <button
                                     className="h-[56px] w-full bg-primary text-[#fff] font-extrabold border rounded-xl active:ring-primary focus:outline-none"
-                                >
-                                    Sign Up
+                                    disabled={isLoading}>
+                                    {isLoading ? "Signing up..." : "Sign up"}
                                 </button>
                             </form>
                             <div className="w-full text-gray-900 my-6 flex justify-center">
