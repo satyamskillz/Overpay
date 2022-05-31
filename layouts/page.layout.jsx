@@ -1,3 +1,4 @@
+import Router from "next/router"
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -5,10 +6,17 @@ function Pagelayout(props) {
     const [isSigned, setSigned] = useState(false)
 
     useEffect(() => {
-        if (localStorage.getItem("isSigned")) {
+        if (localStorage.getItem("isLoggedIn") === "true") {
             setSigned(true)
         }
     }, []);
+
+    const handleSignOut = () => {
+        // remove the token from local storage
+        localStorage.removeItem("isLoggedIn")
+        setSigned(false)
+        Router.push("/")
+    }
 
     return (
         <div className="w-full bg-gray-50">
@@ -18,11 +26,9 @@ function Pagelayout(props) {
                 </div>
 
                 {isSigned ?
-                    <Link href="/signout">
-                        <button className="h-14 w-[150px] md:h-12 md:w-[100px] rounded-xl text-[#fff] bg-primary font-semibold">
-                            Log out
-                        </button>
-                    </Link>
+                    <button onClick={handleSignOut} className="h-14 w-[150px] md:h-12 md:w-[100px] rounded-xl text-[#fff] bg-primary font-semibold">
+                        Log out
+                    </button>
                     :
                     <Link href="/signin">
                         <button className="h-14 w-[150px] md:h-12 md:w-[100px] rounded-xl text-[#fff] bg-primary font-semibold">

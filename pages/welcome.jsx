@@ -1,7 +1,21 @@
 import { useState, useRef, useEffect } from "react";
 import Pagelayout from "../layouts/page.layout";
+import Router from "next/router";
 
 function ForgotPasswordPage() {
+    const handleSignOut = () => {
+        // remove the token from local storage and clear all the cookies
+        localStorage.removeItem("isLoggedIn")
+        Router.push("/")
+    }
+    // Check if user is signed in or not
+    // If user is not signed in, redirect to sign in page 
+    useEffect(() => {
+        if (!localStorage.getItem("isLoggedIn")) {
+            Router.push("/");
+        }
+    }, []);
+
     return (
         <Pagelayout>
             <div className="flex w-[510px] md:w-full p-10 bg-[#fff] gap-10 flex-col items-center justify-center md:p-5 md:gap-5 rounded-2xl shadow-[0px_16px_24px_rgba(93,106,131,0.02)]">
@@ -14,7 +28,7 @@ function ForgotPasswordPage() {
                     </p>
                 </div>
                 <div className="w-full grid gap-6">
-                    <button type="submit" className="w-full h-[56px] rounded-xl text-[#fff] bg-primary font-semibold">
+                    <button onClick={handleSignOut} className="w-full h-[56px] rounded-xl text-[#fff] bg-primary font-semibold">
                         Log out
                     </button>
                 </div>
