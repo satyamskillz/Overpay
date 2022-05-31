@@ -2,10 +2,17 @@ import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
 import Carousel from "../components/carousel";
+import Router from "next/router"
 
 function LoginPage() {
     const [isPasswordHidden, setPasswordHidden] = useState(true)
     const [isRememberChecked, setRememberChecked] = useState(false)
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        console.log("Submitted");
+        Router.push("/welcome");
+    }
 
     return (
         <main className="w-full">
@@ -35,7 +42,7 @@ function LoginPage() {
                                 <span className="absolute text-gray-600 bg-[#fff] px-4 font-regular top-0 left-2/4 -translate-x-[50%] -translate-y-[50%]">Or with email</span>
                             </div>
 
-                            <form className="w-full flex flex-col items-center justify-center gap-4">
+                            <form onSubmit={handleSubmit} className="w-full flex flex-col items-center justify-center gap-4">
                                 <input
                                     className="h-[56px] w-full px-4 border border-gray-300 rounded-xl active:border-primary focus:outline-none focus:ring focus:ring-1 focus:ring-primary placeholder:text-gray-500"
                                     placeholder="Username or email"
