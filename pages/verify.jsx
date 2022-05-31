@@ -49,6 +49,12 @@ function VerifyPage() {
         }, 5000)
     }
 
+    const handleOnInputChange = (e) => {
+        if (e.target.value.length > e.target.maxLength) {
+            e.target.value = e.target.value.slice(0, e.target.maxLength)
+        }
+    }
+
     return (
         <Pagelayout>
             <div className="flex w-[510px] md:w-full p-10 bg-[#fff] gap-10 flex-col items-center justify-center md:p-5 md:gap-5 rounded-2xl shadow-[0px_16px_24px_rgba(93,106,131,0.02)]">
@@ -67,8 +73,11 @@ function VerifyPage() {
                 <form onSubmit={handleSubmit} className="w-full flex flex-col gap-10 md:gap-6">
                     <div className="flex gap-6 justify-center md:gap-0 md:justify-around">
                         <input className="one-digit-input h-14 w-14 pl-5 font-extrabold border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+                            onInput={handleOnInputChange}
                             type="number"
-                            maxLength={1}
+                            min={0}
+                            max={9}
+                            maxLength="1"
                             ref={digit1Ref}
                             onChange={(e) => {
                                 setCode({
@@ -82,10 +91,12 @@ function VerifyPage() {
                         />
 
                         <input className="one-digit-input h-14 w-14 pl-5 font-extrabold border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+                            onInput={handleOnInputChange}
                             type="number"
-                            maxLength={1}
+                            min={0}
+                            max={9}
+                            maxLength="1"
                             ref={digit2Ref}
-                            inputMode="numeric"
                             onChange={(e) => {
                                 setCode({
                                     ...code,
@@ -98,10 +109,12 @@ function VerifyPage() {
                         />
 
                         <input className="one-digit-input h-14 w-14 pl-5 font-extrabold border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+                            onInput={handleOnInputChange}
                             type="number"
-                            maxLength={1}
+                            min={0}
+                            max={9}
+                            maxLength="1"
                             ref={digit3Ref}
-                            inputMode="numeric"
                             onChange={(e) => {
                                 setCode({
                                     ...code,
@@ -114,8 +127,11 @@ function VerifyPage() {
                         />
 
                         <input className="one-digit-input h-14 w-14 pl-5 font-extrabold border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+                            onInput={handleOnInputChange}
                             type="number"
-                            maxLength={1}
+                            min={0}
+                            max={9}
+                            maxLength="1"
                             ref={digit4Ref}
                             onChange={(e) => {
                                 setCode({
@@ -129,8 +145,11 @@ function VerifyPage() {
                         />
 
                         <input className="one-digit-input h-14 w-14 pl-5 font-extrabold border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+                            onInput={handleOnInputChange}
                             type="number"
-                            maxLength={1}
+                            min={0}
+                            max={9}
+                            maxLength="1"
                             ref={digit5Ref}
                             onChange={(e) => {
                                 setCode({
@@ -144,13 +163,7 @@ function VerifyPage() {
                         />
                     </div>
 
-                    {error &&
-                        <div className="w-full h-12 p-4 flex items-center border border-error rounded-xl">
-                            <p className="text-error text-sm text-sm font-semibold">
-                                {error}
-                            </p>
-                        </div>
-                    }
+                    {error && <ErrorBox error={error} />}
 
                     <div className="w-full grid gap-6">
                         <button type="submit" className="w-full h-[56px] rounded-xl text-[#fff] bg-primary font-semibold" disabled={isSubmitDisabled}>
@@ -169,3 +182,14 @@ function VerifyPage() {
 }
 
 export default VerifyPage;
+
+
+const ErrorBox = (props) => {
+    return (
+        <div className="w-full h-12 p-4 flex items-center border border-error rounded-xl">
+            <p className="text-error text-sm text-sm font-semibold">
+                {props.error}
+            </p>
+        </div>
+    )
+}
