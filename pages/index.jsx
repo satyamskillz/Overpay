@@ -1,17 +1,45 @@
-import Head from "next/head";
-import Link from "next/link";
-import { useState } from "react";
 import Carousel from "../components/carousel";
 import Router from "next/router"
+import { useState } from "react"
+import Head from "next/head"
+import Link from "next/link"
 
 function LoginPage() {
     const [isPasswordHidden, setPasswordHidden] = useState(true)
     const [isRememberChecked, setRememberChecked] = useState(false)
+    const [isLoading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const [data, setData] = useState({
+        password: "",
+        email: "",
+    })
+
+    const validateData = () => {
+        if (data.email.length < 1) {
+            setError("Email is required")
+            return false
+        }
+        if (data.password.length < 1) {
+            setError("Password is required")
+            return false
+        }
+        return true
+    }
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log("Submitted");
-        Router.push("/welcome");
+        setError(null)
+        setLoading(true)
+        if (validateData()) {
+            // delay for 5 seconds
+            setTimeout(() => {
+                localStorage.setItem("isLoggedIn", true)
+                setLoading(false)
+                Router.push("/welcome");
+            }, 5000)
+        } else {
+            setLoading(false)
+        }
     }
 
     return (
@@ -45,18 +73,26 @@ function LoginPage() {
                             <form onSubmit={handleSubmit} className="w-full flex flex-col items-center justify-center gap-4">
                                 <input
                                     className="h-[56px] w-full px-4 border border-gray-300 rounded-xl active:border-primary focus:outline-none focus:ring focus:ring-1 focus:ring-primary placeholder:text-gray-500"
+                                    onChange={(event) => setData({ ...data, email: event.target.value })}
                                     placeholder="Username or email"
+                                    value={data.email}
                                     type="email"
+                                    id="email"
                                     required
-                                    regex="^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
                                 />
+
                                 <div className="w-full relative">
                                     <input
                                         className="h-[56px] w-full px-4 border border-gray-300 rounded-xl active:border-primary focus:outline-none focus:ring focus:ring-1 focus:ring-primary placeholder:text-gray-500"
+                                        onChange={(event) => setData({ ...data, password: event.target.value })}
                                         type={isPasswordHidden ? "password" : "text"}
                                         placeholder="Password"
+                                        value={data.password}
+                                        minLength="8"
+                                        id="password"
                                         required
                                     />
+
                                     {isPasswordHidden ?
                                         <button type="button" onClick={() => setPasswordHidden(false)} className="bg-[#fff] absolute top-2/4 right-4 -translate-y-[50%] flex items-center justify-center">
                                             <img src="/icons/eye-off.svg" alt="Eye off icon" />
@@ -68,7 +104,7 @@ function LoginPage() {
                                     }
                                 </div>
                                 <div className="w-full flex justify-between my-1">
-                                    <label class="inline-flex items-center">
+                                    <label className="inline-flex items-center">
                                         <input type="checkbox" class="w-4 h-4 hidden" onChange={(e) => setRememberChecked(e.target.checked)} />
                                         {isRememberChecked ?
                                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -89,13 +125,20 @@ function LoginPage() {
                                         </a>
                                     </Link>
                                 </div>
-
-                                <button
+                                {error &&
+                                    <div className="w-full h-12 p-4 flex items-center border border-error rounded-xl">
+                                        <p className="text-error text-sm text-sm font-semibold">
+                                            {error}
+                                        </p>
+                                    </div>
+                                }
+                                <button disabled={isLoading}
                                     className="h-[56px] w-full bg-primary text-[#fff] font-extrabold border rounded-xl active:ring-primary focus:outline-none"
                                 >
-                                    Sign in
+                                    {isLoading ? "Signing in..." : "Sign in"}
                                 </button>
                             </form>
+
                             <div className="w-full text-gray-900 my-6 flex justify-center">
                                 <p>
                                     Don't have an account?{" "}
