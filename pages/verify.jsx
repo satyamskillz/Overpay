@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import Pagelayout from "../layouts/page.layout";
+import Router from "next/router";
 
-function OTP() {
+function VerifyPage() {
 
     const digit1Ref = useRef(null);
     const digit2Ref = useRef(null);
@@ -10,7 +11,9 @@ function OTP() {
     const digit5Ref = useRef(null);
 
     const [isSubmitDisabled, setSubmitDisabled] = useState(true)
+    const [isLoading, setLoading] = useState(false)
     const [minCount, setMinCount] = useState(60)
+    const [error, setError] = useState(null)
     const [code, setCode] = useState({
         digit1: "",
         digit2: "",
@@ -34,6 +37,18 @@ function OTP() {
         return () => clearInterval(interval)
     }, [minCount])
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setError(null)
+        setLoading(true)
+        // delay for 5 seconds
+        setTimeout(() => {
+            localStorage.setItem("isLoggedIn", true)
+            setLoading(false)
+            Router.push("/welcome");
+        }, 5000)
+    }
+
     return (
         <Pagelayout>
             <div className="flex w-[510px] md:w-full p-10 bg-[#fff] gap-10 flex-col items-center justify-center md:p-5 md:gap-5 rounded-2xl shadow-[0px_16px_24px_rgba(93,106,131,0.02)]">
@@ -49,14 +64,12 @@ function OTP() {
                         </span>
                     </p>
                 </div>
-                <div className="w-full flex flex-col gap-10 md:gap-6">
-
+                <form onSubmit={handleSubmit} className="w-full flex flex-col gap-10 md:gap-6">
                     <div className="flex gap-6 justify-center md:gap-0 md:justify-around">
-                        <input className="h-14 w-14 pl-5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
-                            type="text"
+                        <input className="one-digit-input h-14 w-14 pl-5 font-extrabold border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+                            type="number"
                             maxLength={1}
                             ref={digit1Ref}
-                            inputMode="numeric"
                             onChange={(e) => {
                                 setCode({
                                     ...code,
@@ -68,8 +81,8 @@ function OTP() {
                             }}
                         />
 
-                        <input className="h-14 w-14 pl-5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
-                            type="text"
+                        <input className="one-digit-input h-14 w-14 pl-5 font-extrabold border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+                            type="number"
                             maxLength={1}
                             ref={digit2Ref}
                             inputMode="numeric"
@@ -84,8 +97,8 @@ function OTP() {
                             }}
                         />
 
-                        <input className="h-14 w-14 pl-5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
-                            type="text"
+                        <input className="one-digit-input h-14 w-14 pl-5 font-extrabold border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+                            type="number"
                             maxLength={1}
                             ref={digit3Ref}
                             inputMode="numeric"
@@ -100,11 +113,10 @@ function OTP() {
                             }}
                         />
 
-                        <input className="h-14 w-14 pl-5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
-                            type="text"
+                        <input className="one-digit-input h-14 w-14 pl-5 font-extrabold border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+                            type="number"
                             maxLength={1}
                             ref={digit4Ref}
-                            inputMode="numeric"
                             onChange={(e) => {
                                 setCode({
                                     ...code,
@@ -116,11 +128,10 @@ function OTP() {
                             }}
                         />
 
-                        <input className="h-14 w-14 pl-5 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
-                            type="text"
+                        <input className="one-digit-input h-14 w-14 pl-5 font-extrabold border-2 border-gray-300 rounded-lg focus:outline-none focus:border-primary"
+                            type="number"
                             maxLength={1}
                             ref={digit5Ref}
-                            inputMode="numeric"
                             onChange={(e) => {
                                 setCode({
                                     ...code,
@@ -133,9 +144,17 @@ function OTP() {
                         />
                     </div>
 
+                    {error &&
+                        <div className="w-full h-12 p-4 flex items-center border border-error rounded-xl">
+                            <p className="text-error text-sm text-sm font-semibold">
+                                {error}
+                            </p>
+                        </div>
+                    }
+
                     <div className="w-full grid gap-6">
                         <button type="submit" className="w-full h-[56px] rounded-xl text-[#fff] bg-primary font-semibold" disabled={isSubmitDisabled}>
-                            Verify Account
+                            {isLoading ? "Verifying..." : "Verify Account"}
                         </button>
 
                         <p className="text-center text-gray-600 text-base">
@@ -143,10 +162,10 @@ function OTP() {
                         </p>
                     </div>
 
-                </div>
+                </form>
             </div>
         </Pagelayout>
     );
 }
 
-export default OTP;
+export default VerifyPage;
